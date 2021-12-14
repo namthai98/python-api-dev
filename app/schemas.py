@@ -1,0 +1,76 @@
+from pydantic import BaseModel, EmailStr
+from datetime import datetime
+from typing import Optional
+
+from pydantic.types import conint
+
+from app.database import Base
+
+class PostBase(BaseModel):
+    title: str
+    content: str
+    published: bool = True
+
+class CreatedPost(PostBase):
+    pass
+
+class UserOut(BaseModel):
+    id: int
+    email: EmailStr
+    created_time: datetime
+
+    class Config:
+        orm_mode = True
+
+class Post(PostBase):
+    id: int
+    created_time: datetime
+    owner_id: int
+    owner: UserOut
+    
+    class Config:
+        orm_mode = True
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    id: Optional[str] = None
+
+class Vote(BaseModel):
+    post_id: int
+    dir: conint(le=1)
+
+
+
+class PostOut(PostBase):
+    title: str
+    content: str
+
+class PostVote(BaseModel):
+    title: str
+    published: str
+    owner_id: str
+    content: str
+    id: str
+    created_time: datetime
+    class Config:
+        orm_mode = True
+
+class Vote_out(BaseModel):
+    Post: PostVote
+    votes: int
+    
+    class Config:
+        orm_mode = True
+
+
